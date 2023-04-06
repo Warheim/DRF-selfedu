@@ -1,5 +1,6 @@
 from django.shortcuts import redirect
 from rest_framework.generics import ListCreateAPIView, UpdateAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.viewsets import ModelViewSet
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from women.models import Woman
@@ -10,22 +11,35 @@ def index(request):
     return redirect('women')
 
 
-class WomanView(ListCreateAPIView):
+"""Как работают ViewSet'ы (заменяя ViewClass'ы)"""
+
+
+class WomanViewSet(ModelViewSet):
     queryset = Woman.objects.all()
     serializer_class = WomanSerializer
 
 
-class WomanUpdate(UpdateAPIView):
-    queryset = Woman.objects.all()
-    serializer_class = WomanSerializer
+"""Как работают готовые View-классы (заменяя ApiView) из коробки но без ViewSet'ов описано ниже"""
 
 
-class WomanDetailView(RetrieveUpdateDestroyAPIView):
-    queryset = Woman.objects.all()
-    serializer_class = WomanSerializer
+# class WomanView(ListCreateAPIView):
+#     queryset = Woman.objects.all()
+#     serializer_class = WomanSerializer
+#
+#
+# class WomanUpdate(UpdateAPIView):
+#     queryset = Woman.objects.all()
+#     serializer_class = WomanSerializer
+#
+#
+# class WomanDetailView(RetrieveUpdateDestroyAPIView):
+#     queryset = Woman.objects.all()
+#     serializer_class = WomanSerializer
 
 
-"""Как работает APIView под капотом описано ниже"""
+"""Как работает APIView (заменяя рукописные view) под капотом описано ниже"""
+
+
 # class WomanView(APIView):
 #     def get(self, request):
 #         women = Woman.objects.all()

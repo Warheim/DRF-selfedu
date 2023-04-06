@@ -14,6 +14,8 @@ class WomanSerializer(serializers.ModelSerializer):
 
 
 """Как работает ModelSerializer под капотом описано ниже"""
+
+
 # class WomenModel:
 #     def __init__(self, title, content):
 #         self.title = title
