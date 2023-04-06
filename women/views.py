@@ -1,5 +1,5 @@
 from django.shortcuts import redirect
-from rest_framework.generics import ListCreateAPIView
+from rest_framework.generics import ListCreateAPIView, UpdateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from women.models import Woman
@@ -11,6 +11,16 @@ def index(request):
 
 
 class WomanView(ListCreateAPIView):
+    queryset = Woman.objects.all()
+    serializer_class = WomanSerializer
+
+
+class WomanUpdate(UpdateAPIView):
+    queryset = Woman.objects.all()
+    serializer_class = WomanSerializer
+
+
+class WomanDetailView(RetrieveUpdateDestroyAPIView):
     queryset = Woman.objects.all()
     serializer_class = WomanSerializer
 
