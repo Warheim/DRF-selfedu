@@ -7,7 +7,7 @@ class Woman(models.Model):
     time_create = models.DateTimeField(auto_now_add=True)
     time_update = models.DateTimeField(auto_now=True)
     is_published = models.BooleanField(default=True)
-    categories = models.ForeignKey('Category', on_delete=models.PROTECT, null=True)
+    categories = models.ForeignKey('Category', on_delete=models.PROTECT, null=True, related_name='women')
 
     def __str__(self):
         return self.name
