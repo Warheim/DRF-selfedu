@@ -1,6 +1,4 @@
-from django.forms import model_to_dict
 from django.shortcuts import redirect
-from rest_framework.generics import RetrieveUpdateAPIView
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from women.models import Woman
@@ -11,31 +9,37 @@ def index(request):
     return redirect('women')
 
 
-# class WomanView(ListAPIView):
-#     queryset = Woman.objects.all()
-#     serializer_class = WomanSerializer
-
-
 class WomanView(APIView):
     def get(self, request):
         women = Woman.objects.all().values()
-        return Response({'posts': list(women)})
+        return Response({'posts': WomanSerializer(women, many=True).data})
 
     def post(self, request):
-        post = Woman.objects.create(
-            name=request.data['name'],
-            content=request.data['content'],
-            categories_id=request.data['categories'])
-        return Response({'post': model_to_dict(post)})
+        serializer = WomanSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response({'post': serializer.data})
 
+    def put(self, request, *args, **kwargs):
+        pk = kwargs.get('pk')
+        if not pk:
+            return Response({'error': 'Method PUT not allowed'})
+        try:
+            instance = Woman.objects.get(pk=pk)
+        except:
+            return Response({'error': 'Object does not exist'})
 
-class WomanRetrieveUpdateView(APIView):
-    def patch(self, request, pk):
-        Woman.objects.filter(id=pk).update(
-            content=request.data['content']
-        )
-        return Response({'status': 'OK'})
+        serializer = WomanSerializer(data=request.data, instance=instance)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response({'post': serializer.data})
 
-    def delete(self, request, pk):
-        Woman.objects.filter(id=pk).delete()
-        return Response({'status': 'OK'})
+    def delete(self, request, *args, **kwargs):
+        pk = kwargs.get('pk')
+        if not pk:
+            return Response({'error': 'Method DELETE is not allowed'})
+        try:
+            Woman.objects.get(pk=pk).delete()
+        except:
+            return Response({'error': 'Object does not exist'})
+        return Response({'delete': f'Object {pk} deleted'})

@@ -6,6 +6,7 @@ class Woman(models.Model):
     content = models.TextField(blank=True)
     time_create = models.DateTimeField(auto_now_add=True)
     time_update = models.DateTimeField(auto_now=True)
+    is_published = models.BooleanField(default=True)
     categories = models.ForeignKey('Category', on_delete=models.PROTECT, null=True)
 
     def __str__(self):
