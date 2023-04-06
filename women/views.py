@@ -1,26 +1,42 @@
 from django.shortcuts import redirect
 from rest_framework.generics import ListCreateAPIView, UpdateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.viewsets import ModelViewSet
+from rest_framework.decorators import action
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from women.models import Woman
+from women.models import Woman, Category
 from women.serializers import WomanSerializer
 
 
 def index(request):
-    return redirect('women')
+    return redirect('women-list')
 
 
-"""Как работают ViewSet'ы (заменяя ViewClass'ы)"""
+"""Как работают ViewSet'ы (заменяя ViewClass'ы), как работает экшн добавления пути к роутам (показывает categories)"""
 
 
+#   Если тут убираем queryset, то добавляем имя в basename в роутер. А убираем мы его чтобы воспользоваться get_queryset
 class WomanViewSet(ModelViewSet):
-    queryset = Woman.objects.all()
+    # queryset = Woman.objects.all()
     serializer_class = WomanSerializer
+
+    #   Это для получения определенных записей или срезов:
+
+    def get_queryset(self):
+        pk = self.kwargs.get('pk')
+        if not pk:
+            return Woman.objects.all()[:3]
+        return Woman.objects.filter(pk=pk)
+
+    #   Это для регистрации роута под categories, его раньше не было
+
+    @action(methods=['get'], detail=True)
+    def show_cats(self, request, pk=None):
+        cats = Category.objects.get(pk=pk)
+        return Response({'cats': cats.name})
 
 
 """Как работают готовые View-классы (заменяя ApiView) из коробки но без ViewSet'ов описано ниже"""
-
 
 # class WomanView(ListCreateAPIView):
 #     queryset = Woman.objects.all()
@@ -38,7 +54,6 @@ class WomanViewSet(ModelViewSet):
 
 
 """Как работает APIView (заменяя рукописные view) под капотом описано ниже"""
-
 
 # class WomanView(APIView):
 #     def get(self, request):

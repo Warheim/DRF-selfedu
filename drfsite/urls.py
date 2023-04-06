@@ -19,14 +19,16 @@ from django.urls import path, include
 from women.views import WomanViewSet, index
 from rest_framework import routers
 
-router = routers.SimpleRouter()
-router.register('women', WomanViewSet)
+router = routers.DefaultRouter()
+router.register('women', WomanViewSet, basename='women')
+print(router.urls)
 
+""" Ниже закоммичены пути, которые были до введения роутеров и вью-сета"""
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('', index),
     path('api/v1/', include(router.urls)),
-    """ Ниже пути, которые были до введения роутеров и вью-сета"""
     # path('api/v1/women/', WomanViewSet.as_view({'get': 'list'}), name='women'),
     # path('api/v1/women/<int:pk>/', WomanViewSet.as_view({'put': 'update'})),
 ]
